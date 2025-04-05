@@ -1,35 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<!-- Mirrored from md-game.netlify.app/game-selector.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 05 Apr 2025 18:35:23 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Hub</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Custom styles for purple buttons with white text */
+        /* Reset all button styling to remove gradients and set purple with white text */
         button {
-            background-color: #6a0dad; /* Purple color */
-            color: white; /* White text */
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
+            background: #6a0dad !important; /* Purple color with !important to override any existing styles */
+            background-image: none !important; /* Remove any gradient */
+            background-color: #6a0dad !important; /* Backup background color */
+            color: white !important; /* White text */
+            border: none !important;
+            box-shadow: none !important; /* Remove any shadow that might create gradient-like effects */
         }
         
         button:hover {
-            background-color: #8a2be2; /* Lighter purple on hover */
+            background: #8a2be2 !important; /* Lighter purple on hover */
+            background-image: none !important;
+            background-color: #8a2be2 !important;
         }
         
-        /* Sign out button styling */
         .sign-out-btn {
-            background-color: #6a0dad; /* Purple color */
-            color: white; /* White text */
+            background: #6a0dad !important;
+            background-image: none !important;
+            color: white !important;
         }
         
         .sign-out-btn:hover {
-            background-color: #8a2be2; /* Lighter purple on hover */
+            background: #8a2be2 !important;
+            background-image: none !important;
         }
     </style>
 </head>
@@ -188,4 +192,6 @@
     <script src="search.js"></script>
     <script src="game-selector.js"></script>
 </body>
+
+<!-- Mirrored from md-game.netlify.app/game-selector.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 05 Apr 2025 18:35:31 GMT -->
 </html>
