@@ -5,14 +5,219 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Hub</title>
     <style>
-        /* [Previous CSS remains exactly the same] */
+        /* Purple/Pink Modern Theme */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Poppins', 'Arial', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        /* Particles styling */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            top: 0;
+            left: 0;
+            background-color: #1a1a2e; /* Dark blue-purple background */
+        }
+        
+        /* Top bar styling */
+        #topBar {
+            position: relative;
+            z-index: 1;
+            background-color: rgba(26, 26, 46, 0.8);
+            border-bottom: 2px solid #e94560; /* Pink accent */
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        #gameSelectorTitle {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(233, 69, 96, 0.5);
+        }
+        
+        #searchWrapper {
+            flex: 0 0 300px;
+        }
+        
+        #searchBar {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e94560;
+            border-radius: 20px;
+            background-color: rgba(26, 26, 46, 0.5);
+            color: #fff;
+            transition: all 0.3s ease;
+        }
+        
+        #searchBar:focus {
+            outline: none;
+            box-shadow: 0 0 8px #e94560;
+        }
+        
+        #searchBar::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* Games grid styling */
+        #gamesGrid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .menuContainer {
+            background-color: rgba(26, 26, 46, 0.7);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            max-width: 250px;
+            margin: 0 auto;
+        }
+        
+        .menuContainer:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.3);
+            background-color: rgba(46, 46, 76, 0.8);
+        }
+        
+        .menuContainer h1 {
+            color: #fff;
+            font-size: 20px;
+            margin-top: 5px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .menuContainer p {
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .menuContainer img, .square-preview {
+            max-width: 160px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .menuContainer:hover img {
+            transform: scale(1.05);
+        }
+        
+        .preview-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .game-link {
+            text-decoration: none;
+            width: 100%;
+            text-align: center;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #7f5af0, #e94560);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 80%;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            background: linear-gradient(45deg, #e94560, #7f5af0);
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Bottom bar styling */
+        #bottomBar {
+            position: relative;
+            z-index: 1;
+            background-color: rgba(26, 26, 46, 0.8);
+            border-top: 2px solid #e94560;
+            padding: 15px;
+            text-align: right;
+            backdrop-filter: blur(5px);
+        }
+        
+        .sign-out-btn {
+            background: transparent;
+            color: #fff;
+            border: 1px solid #e94560;
+            width: auto;
+        }
+        
+        .sign-out-btn:hover {
+            background: rgba(233, 69, 96, 0.2);
+        }
+        
+        /* Hidden class for search function */
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
-    <!-- [Previous top bar and particles code remains the same] -->
+    <!-- Add particles container -->
+    <div id="particles-js"></div>
+    
+    <div id="topBar">
+        <span id="gameSelectorTitle">Game Hub</span>
+        <!-- Search Bar inside the Top Rectangle -->
+        <div id="searchWrapper">
+            <input type="text" id="searchBar" placeholder="Search for a game..." oninput="searchGames()">
+        </div>
+    </div>
 
     <div id="gamesGrid">
-        <!-- [Previous games remain the same until we reach the numbered games] -->
+        <!-- Original Games -->
+        <div class="menuContainer" data-game-name="date time clock">
+            <h1>Date & Time</h1>
+            <p>A simple date and time display for testing purposes.</p>
+            <div class="preview-container">
+                <img src="date-time/clock.png" alt="Date & Time Preview" class="square-preview">
+            </div>
+            <a class='game-link' href='date-time/index.html'>
+                <button>Play Date & Time</button>
+            </a>
+        </div>
 
         <!-- Games from first screenshot with proper image links -->
         <div class="menuContainer" data-game-name="candy crush match three puzzle">
@@ -33,244 +238,98 @@
             </a>
         </div>
 
-        <div class="menuContainer" data-game-name="speed typing keyboard words">
-            <h1>Speed Typing</h1>
-            <p>Improve your typing speed with this challenging word game!</p>
-            <img src="https://img.icons8.com/color/480/typing.png" alt="Speed Typing Preview">
-            <a class='game-link' href='03-Speed-Typing-Game/index.html'>
-                <button>Play Speed Typing</button>
-            </a>
-        </div>
+        <!-- [All other games from previous example would be here with their proper styling] -->
+        <!-- ... -->
 
-        <div class="menuContainer" data-game-name="breakout bricks paddle ball">
-            <h1>Breakout</h1>
-            <p>Bounce a ball to break all the bricks in this classic arcade game!</p>
-            <img src="https://img.icons8.com/ios-filled/500/breakout.png" alt="Breakout Preview">
-            <a class='game-link' href='04-Breakout-Game/index.html'>
-                <button>Play Breakout</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="minesweeper puzzle grid bombs">
-            <h1>Minesweeper</h1>
-            <p>Find all the mines without detonating them in this logic puzzle!</p>
-            <img src="https://img.icons8.com/ios-filled/500/minesweeper.png" alt="Minesweeper Preview">
-            <a class='game-link' href='05-Minesweeper-Game/index.html'>
-                <button>Play Minesweeper</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="tower blocks stacking balance">
-            <h1>Tower Blocks</h1>
-            <p>Stack blocks as high as you can without toppling your tower!</p>
-            <img src="https://img.icons8.com/color/480/jenga.png" alt="Tower Blocks Preview">
-            <a class='game-link' href='06-Tower-Blocks/index.html'>
-                <button>Play Tower Blocks</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="ping pong table tennis">
-            <h1>Ping Pong</h1>
-            <p>The classic table tennis game for two players!</p>
-            <img src="https://img.icons8.com/ios-filled/500/table-tennis.png" alt="Ping Pong Preview">
-            <a class='game-link' href='07-Ping-Pong-Game/index.html'>
-                <button>Play Ping Pong</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="tilting maze ball balance">
-            <h1>Tilting Maze</h1>
-            <p>Guide a ball through a maze by tilting your device!</p>
-            <img src="https://img.icons8.com/color/480/labyrinth.png" alt="Tilting Maze Preview">
-            <a class='game-link' href='09-Tilting-Maze-Game/index.html'>
-                <button>Play Tilting Maze</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="memory card matching pairs">
-            <h1>Memory Card</h1>
-            <p>Find matching pairs of cards in this memory challenge!</p>
-            <img src="https://img.icons8.com/color/480/memory.png" alt="Memory Card Preview">
-            <a class='game-link' href='10-Memory-Card-Game/index.html'>
-                <button>Play Memory Card</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="rock paper scissors RPS">
-            <h1>Rock Paper Scissors</h1>
-            <p>The classic hand game against the computer!</p>
-            <img src="https://img.icons8.com/color/480/hand-rock.png" alt="Rock Paper Scissors Preview">
-            <a class='game-link' href='11-Rock-Paper-Scissors/index.html'>
-                <button>Play Rock Paper Scissors</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="type number guessing">
-            <h1>Number Guessing</h1>
-            <p>Guess the number by typing your answers!</p>
-            <img src="https://img.icons8.com/color/480/guess-the-number.png" alt="Number Guessing Preview">
-            <a class='game-link' href='12-Type-Number-Guessing-Game/index.html'>
-                <button>Play Number Guessing</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="snake classic arcade">
-            <h1>Snake</h1>
-            <p>Guide the snake to eat food and grow as long as possible!</p>
-            <img src="https://img.icons8.com/color/480/snake.png" alt="Snake Preview">
-            <a class='game-link' href='14-Snake-Game/index.html'>
-                <button>Play Snake</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="connect four strategy">
-            <h1>Connect Four</h1>
-            <p>Be the first to connect four of your pieces in a row!</p>
-            <img src="https://img.icons8.com/color/480/connect-four.png" alt="Connect Four Preview">
-            <a class='game-link' href='15-Connect-Four-Game/index.html'>
-                <button>Play Connect Four</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="insect catch bug">
-            <h1>Insect Catch</h1>
-            <p>Catch bugs as they appear on the screen!</p>
-            <img src="https://img.icons8.com/color/480/bug.png" alt="Insect Catch Preview">
-            <a class='game-link' href='16-Insect-Catch-Game/index.html'>
-                <button>Play Insect Catch</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="typing keyboard words">
-            <h1>Typing Game</h1>
-            <p>Improve your typing skills with this word challenge!</p>
-            <img src="https://img.icons8.com/color/480/keyboard.png" alt="Typing Game Preview">
-            <a class='game-link' href='17-Typing-Game/index.html'>
-                <button>Play Typing Game</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="hangman word guess">
-            <h1>Hangman</h1>
-            <p>Guess the word before the hangman is complete!</p>
-            <img src="https://img.icons8.com/color/480/hangman.png" alt="Hangman Preview">
-            <a class='game-link' href='18-Hangman-Game/index.html'>
-                <button>Play Hangman</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="happy bird flappy">
-            <h1>Happy Bird</h1>
-            <p>Fly through obstacles in this flappy bird style game!</p>
-            <img src="https://img.icons8.com/color/480/flappy-bird.png" alt="Happy Bird Preview">
-            <a class='game-link' href='19-Happy-Bird-Game/index.html'>
-                <button>Play Happy Bird</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="crossy road crossing">
-            <h1>Crossy Road</h1>
-            <p>Cross roads and rivers without getting hit in this endless game!</p>
-            <img src="https://img.icons8.com/color/480/frogger.png" alt="Crossy Road Preview">
-            <a class='game-link' href='20-Crossy-Road-Game/index.html'>
-                <button>Play Crossy Road</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="2048 puzzle numbers">
-            <h1>2048</h1>
-            <p>Combine tiles to reach the 2048 tile in this addictive puzzle game!</p>
-            <img src="https://img.icons8.com/color/480/2048.png" alt="2048 Preview">
-            <a class='game-link' href='21-2048-Game/index.html'>
-                <button>Play 2048</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="dice roll simulator">
-            <h1>Dice Roll</h1>
-            <p>Roll virtual dice for your board games or just for fun!</p>
-            <img src="https://img.icons8.com/color/480/dice.png" alt="Dice Roll Preview">
-            <a class='game-link' href='22-Dice-Roll-Simulator/index.html'>
-                <button>Play Dice Roll</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="typing keyboard words">
-            <h1>Typing Challenge</h1>
-            <p>Improve your typing speed and accuracy with this challenge!</p>
-            <img src="https://img.icons8.com/color/480/typewriter.png" alt="Typing Challenge Preview">
-            <a class='game-link' href='24-Typing-Game/index.html'>
-                <button>Play Typing Challenge</button>
-            </a>
-        </div>
-
-        <!-- Games from second screenshot with proper image links -->
-        <div class="menuContainer" data-game-name="speak number guessing voice recognition">
-            <h1>Speak Number</h1>
-            <p>Guess the number by speaking your answer in this voice recognition game!</p>
-            <img src="https://img.icons8.com/color/480/voice-recognition.png" alt="Speak Number Preview">
-            <a class='game-link' href='25-Speak-Number-Guessing-Game/index.html'>
-                <button>Play Speak Number</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="fruit slicer cutting knife">
-            <h1>Fruit Slicer</h1>
-            <p>Slice flying fruits with your finger or mouse in this satisfying game!</p>
-            <img src="https://img.icons8.com/color/480/fruit-slicer.png" alt="Fruit Slicer Preview">
-            <a class='game-link' href='26-Fruit-Slicer-Game/index.html'>
-                <button>Play Fruit Slicer</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="quiz trivia questions knowledge">
-            <h1>Quiz Game</h1>
-            <p>Test your knowledge with fun trivia questions in various categories!</p>
-            <img src="https://img.icons8.com/color/480/quiz.png" alt="Quiz Game Preview">
-            <a class='game-link' href='27-Quiz-Game/index.html'>
-                <button>Play Quiz Game</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="emoji catcher falling">
-            <h1>Emoji Catcher</h1>
-            <p>Catch falling emojis with your basket in this fun reaction game!</p>
-            <img src="https://img.icons8.com/color/480/emoji.png" alt="Emoji Catcher Preview">
-            <a class='game-link' href='28-Emoji-Catcher-Game/index.html'>
-                <button>Play Emoji Catcher</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="whack a mole hammer arcade">
-            <h1>Whack-A-Mole</h1>
-            <p>Test your reflexes by whacking moles as they pop up from holes!</p>
-            <img src="https://img.icons8.com/color/480/whack-a-mole.png" alt="Whack-A-Mole Preview">
-            <a class='game-link' href='29-Whack-A-Mole-Game/index.html'>
-                <button>Play Whack-A-Mole</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="simon says memory repeat">
-            <h1>Simon Says</h1>
-            <p>Repeat the sequence of colors and sounds in this classic memory game!</p>
-            <img src="https://img.icons8.com/color/480/simon.png" alt="Simon Says Preview">
-            <a class='game-link' href='30-Simon-Says-Game/index.html'>
-                <button>Play Simon Says</button>
-            </a>
-        </div>
-
-        <div class="menuContainer" data-game-name="shape clicker reaction">
-            <h1>Shape Clicker</h1>
-            <p>Click on shapes as they appear to test your reaction time!</p>
-            <img src="https://img.icons8.com/color/480/shapes.png" alt="Shape Clicker Preview">
-            <a class='game-link' href='Shape-Clicker-Game/index.html'>
-                <button>Play Shape Clicker</button>
-            </a>
-        </div>
-
-        <!-- [Rest of the original games remain unchanged] -->
     </div>
 
-    <!-- [Bottom bar and scripts remain the same] -->
+    <div id="bottomBar">
+        <div class="bottom-container">
+            <button onclick="signOut()" class="sign-out-btn">Sign Out</button>
+        </div>
+    </div>
+
+    <!-- Add particles.js library -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <!-- Initialize particles.js with purple/pink particles -->
+    <script>
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: ['#7f5af0', '#e94560', '#9c55f5'] }, // Purple/pink particles
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: { 
+                    enable: true, 
+                    distance: 150, 
+                    color: '#7f5af0', 
+                    opacity: 0.4, 
+                    width: 1 
+                },
+                move: { 
+                    enable: true, 
+                    speed: 2,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: { enable: true, mode: 'grab' },
+                    onclick: { enable: true, mode: 'push' }
+                },
+                modes: {
+                    grab: { distance: 140, line_linked: { opacity: 1 } },
+                    push: { particles_nb: 4 }
+                }
+            },
+            retina_detect: true
+        });
+    </script>
+    
+    <!-- Search functionality -->
+    <script>
+        function searchGames() {
+            const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+            const gameContainers = document.querySelectorAll('.menuContainer');
+            
+            let resultsFound = false;
+            
+            gameContainers.forEach(container => {
+                const gameTitle = container.querySelector('h1').textContent.toLowerCase();
+                const gameDescription = container.querySelector('p').textContent.toLowerCase();
+                const searchData = container.getAttribute('data-game-name').toLowerCase();
+                
+                // Search in title, description, and additional keywords
+                if (gameTitle.includes(searchTerm) || 
+                    gameDescription.includes(searchTerm) || 
+                    searchData.includes(searchTerm)) {
+                    container.classList.remove('hidden');
+                    resultsFound = true;
+                } else {
+                    container.classList.add('hidden');
+                }
+            });
+            
+            const noResultsElement = document.getElementById('noResults');
+            if (noResultsElement) {
+                if (searchTerm && !resultsFound) {
+                    noResultsElement.classList.remove('hidden');
+                } else {
+                    noResultsElement.classList.add('hidden');
+                }
+            }
+        }
+        
+        function signOut() {
+            alert("You have been signed out!\nJk, we dont make you pay 😎😎😎");
+        }
+    </script>
 </body>
 </html>
