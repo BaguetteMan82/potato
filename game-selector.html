@@ -581,5 +581,25 @@
             alert("You have been signed out!\nJk, we dont make you pay 😎😎😎");
         }
     </script>
+    
+    <script>
+  // Check login state on page load
+  window.onload = function () {
+    const user = JSON.parse(localStorage.getItem('user'));
+    const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+    if (!user || (Date.now() - user.timestamp >= oneHour)) {
+      // User is not logged in or session expired
+      localStorage.removeItem('user');
+      window.location.href = '/index.html'; // Redirect to login page
+    }
+  };
+
+  // Handle sign-out button click
+  function signOut() {
+    localStorage.removeItem('user'); // Clear user session
+    alert("You have been signed out!");
+    window.location.href = '/index.html'; // Redirect to login page
+  }
+</script>
 </body>
 </html>
