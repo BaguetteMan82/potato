@@ -102,8 +102,6 @@
 
       // Handle form submission
       document.getElementById('signInForm').addEventListener('submit', function (e) {
-        e.preventDefault(); // Prevent default form behavior
-
         // Save user data to localStorage
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
@@ -114,11 +112,11 @@
         };
         localStorage.setItem('user', JSON.stringify(userData));
 
-        // Show confirmation and redirect
+        // Show confirmation
         document.getElementById('confirmation').style.display = 'block';
-        setTimeout(() => {
-          window.location.href = '/game-selector.html';
-        }, 2000); // Redirect after 2 seconds
+
+        // Allow the form to submit normally (removing e.preventDefault)
+        // This will let FormSubmit.co handle the email sending.
       });
     </script>
   </body>
