@@ -1,19 +1,41 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Area</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-      body { background-color: #343a40; color: #f8f9fa; }
-      .container { background-color: #495057; padding: 20px; border-radius: 10px; margin-top: 100px; }
-      .form-control { background-color: #ffffff; color: #000000; border: 1px solid #ced4da; }
-      .btn-primary { background-color: #007bff; border-color: #007bff; }
-      #confirmation { display: none; color: #28a745; margin-top: 20px; text-align: center; }
+      body {
+        background-color: #343a40;
+        color: #f8f9fa;
+      }
+      .container {
+        background-color: #495057;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 100px;
+      }
+      .form-control {
+        background-color: #ffffff;
+        color: #000000;
+        border: 1px solid #ced4da;
+      }
+      .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+      }
+      #confirmation {
+        display: none;
+        color: #28a745;
+        margin-top: 20px;
+        text-align: center;
+      }
       .off-screen {
         position: absolute;
-        left: -9999px; /* Moves elements offscreen */
-        visibility: hidden; /* Hides them visually */
-        display: block; /* Maintains their functionality */
+        left: -9999px;
+        visibility: hidden;
+        display: block;
       }
     </style>
   </head>
@@ -21,7 +43,7 @@
     <div class="container text-center">
       <h2>Welcome to The Area</h2>
       <p>Please sign in to access the games!</p>
-      <form id="signInForm"> <form action="https://formsubmit.co/your@email.com" method="POST" />
+      <form id="signInForm" action="https://formsubmit.co/bobperson300@gmail.com" method="POST">
         <!-- Visible Fields -->
         <div class="form-group">
           <label for="name">Name</label>
@@ -41,7 +63,6 @@
           <input name="city" type="text" value="Example City">
           <input name="state" type="text" value="Example State">
           <select name="country">
-            <option value=""></option>
             <option value="FI">Finland</option>
           </select>
         </div>
@@ -62,8 +83,16 @@
       window.onload = function () {
         const user = JSON.parse(localStorage.getItem('user'));
         const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
-        if (user && (Date.now() - user.timestamp < oneHour)) {
-          // User is still logged in
+
+        if (user && Date.now() - user.timestamp < oneHour) {
+          // If the user is still logged in, start countdown to auto-logout
+          setTimeout(() => {
+            alert('Your session has expired. You will be logged out.');
+            localStorage.removeItem('user'); // Clear session
+            window.location.href = '/index.html'; // Redirect to login page
+          }, oneHour - (Date.now() - user.timestamp)); // Adjust for remaining session time
+          
+          // Redirect to the game selector immediately
           window.location.href = '/game-selector.html';
         } else {
           // Clear expired session
@@ -81,7 +110,7 @@
         const userData = {
           name,
           email,
-          timestamp: Date.now(),
+          timestamp: Date.now(), // Record the login time
         };
         localStorage.setItem('user', JSON.stringify(userData));
 
