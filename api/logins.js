@@ -2,8 +2,12 @@ const bcrypt = require('bcrypt');
 
 export default async function handler(event) {
     try {
+        // Log the start of the handler
+        console.log("Handler invoked, HTTP Method:", event.httpMethod);
+
         // Ensure it's a POST request
         if (event.httpMethod !== 'POST') {
+            console.log("Invalid HTTP method:", event.httpMethod);
             return {
                 statusCode: 405, // Method Not Allowed
                 body: JSON.stringify({ message: "Method Not Allowed" })
@@ -12,6 +16,7 @@ export default async function handler(event) {
 
         // Parse username and password from the request body
         const { username, password } = JSON.parse(event.body);
+        console.log("Received login attempt for username:", username);
 
         // Replace this with your stored user credentials (hashed passwords)
         const storedCredentials = [
@@ -32,14 +37,22 @@ export default async function handler(event) {
         // Find the user with the given username
         const user = storedCredentials.find(u => u.username === username);
         if (!user) {
+            console.log("User not found for username:", username);
             return {
                 statusCode: 401,
                 body: JSON.stringify({ message: "Invalid username or password" })
             };
         }
 
+        // Log before password verification
+        console.log("User found, verifying password...");
+
         // Verify the password against the stored hash
         const isPasswordValid = await bcrypt.compare(password, user.hashedPassword);
+
+        // Log the result of the password comparison
+        console.log("Password verification result:", isPasswordValid);
+
         if (!isPasswordValid) {
             return {
                 statusCode: 401,
@@ -48,6 +61,7 @@ export default async function handler(event) {
         }
 
         // Respond quickly with success
+        console.log("Login successful for username:", username);
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Login successful" })
