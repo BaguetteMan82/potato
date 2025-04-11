@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 
-exports.handler = async (event) => {
+export default async function handler(event) {
     try {
         // Ensure it's a POST request
         if (event.httpMethod !== 'POST') {
@@ -60,4 +60,4 @@ exports.handler = async (event) => {
             body: JSON.stringify({ message: "Internal Server Error" })
         };
     }
-};
+}
