@@ -1,8 +1,18 @@
 const crypto = require('crypto');
 
+// Helper function to encrypt passwords
+function encryptPassword(password, key) {
+    const iv = Buffer.alloc(16, 0); // 16 bytes of zero for simplicity
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+    let encryptedPassword = cipher.update(password, 'utf8', 'hex');
+    encryptedPassword += cipher.final('hex');
+    return encryptedPassword;
+}
+
 // Helper function to decrypt passwords
 function decryptPassword(encryptedPassword, key) {
-    const decipher = crypto.createDecipher('aes-256-cbc', key);
+    const iv = Buffer.alloc(16, 0); // 16 bytes of zero for simplicity
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
     let decryptedPassword = decipher.update(encryptedPassword, 'hex', 'utf8');
     decryptedPassword += decipher.final('utf8');
     return decryptedPassword;
@@ -52,15 +62,15 @@ export default async function handler(event) {
         const storedCredentials = [
             {
                 username: "admin",
-                encryptedPassword: "d11fbaafa58bbc6105a2426c5db6fd4c",
+                encryptedPassword: encryptPassword("adminpassword", encryptionKey),
             },
             {
                 username: "andrew",
-                encryptedPassword: "c77962800851b428e9653055dc1410e1",
+                encryptedPassword: encryptPassword("andrewpassword", encryptionKey),
             },
             {
                 username: "guest",
-                encryptedPassword: "f8f414e58dcaadc150e7b23b49f2efdb",
+                encryptedPassword: encryptPassword("guestpassword", encryptionKey),
             },
         ];
 
