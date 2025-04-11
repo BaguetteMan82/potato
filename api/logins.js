@@ -44,20 +44,20 @@ export default async function handler(event) {
         const storedCredentials = [
             {
                 username: "admin",
-                encryptedPassword: "d11fbaafa58bbc6105a2426c5db6fd4c",
+                hashedPassword: "$2b$10$690mZ3yK32y.1.Dg.SalWObM9KTVio4I0i3WpAwgDGqCimHnMCGMq" // Example hash for "adminpassword"
             },
             {
                 username: "andrew",
-                encryptedPassword: "c77962800851b428e9653055dc1410e1",
+                hashedPassword: "$2b$10$/x2xlcTuH8vuH2Sv8nI2ueOUQW4Ng0p5IXohcpyCYXcZQ2KiDM.4O" // Example hash for "andrewpassword"
             },
             {
                 username: "guest",
-                encryptedPassword: "f8f414e58dcaadc150e7b23b49f2efdb",
-            },
+                hashedPassword: "$2b$10$CVdVPxuBUDn34vUewFAShOpwOslfbRbPVuiGlo7WHLYL8.x6yHA/O" // Example hash for "guestpassword"
+            }
         ];
 
-        console.log("Finding user...");
-        const user = storedCredentials.find((u) => u.username === username);
+        // Find the user with the given username
+        const user = storedCredentials.find(u => u.username === username);
         if (!user) {
             console.log("User not found:", username);
             return {
@@ -83,7 +83,7 @@ export default async function handler(event) {
             };
         }
 
-        console.log("Login successful for user:", username);
+        // Success response
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Login successful" }),
@@ -96,20 +96,3 @@ export default async function handler(event) {
         };
     }
 }
-
-
-
-/* const storedCredentials = [
-    {
-        username: "admin",
-        encryptedPassword: "d11fbaafa58bbc6105a2426c5db6fd4c",
-    },
-    {
-        username: "andrew",
-        encryptedPassword: "c77962800851b428e9653055dc1410e1",
-    }, thiskey1willnever2besolved3
-    {
-        username: "guest",
-        encryptedPassword: "f8f414e58dcaadc150e7b23b49f2efdb",
-    },
-]; *\
