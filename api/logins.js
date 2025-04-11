@@ -1,5 +1,13 @@
 const crypto = require('crypto');
 
+// Helper function to decrypt passwords
+function decryptPassword(encryptedPassword, key) {
+    const decipher = crypto.createDecipher('aes-256-cbc', key);
+    let decryptedPassword = decipher.update(encryptedPassword, 'hex', 'utf8');
+    decryptedPassword += decipher.final('utf8');
+    return decryptedPassword;
+}
+
 export default async function handler(event) {
     try {
         // Retrieve the encryption key from Vercel's environment variables
@@ -41,20 +49,21 @@ export default async function handler(event) {
         console.log("Received login attempt for username:", username);
 
         // Replace this with your stored encrypted passwords
-     const storedCredentials = [
-    {
-        username: "admin",
-        encryptedPassword: "d11fbaafa58bbc6105a2426c5db6fd4c",
-    },
-    {
-        username: "andrew",
-        encryptedPassword: "c77962800851b428e9653055dc1410e1",
-    },
-    {
-        username: "guest",
-        encryptedPassword: "f8f414e58dcaadc150e7b23b49f2efdb",
-    },
-];
+        const storedCredentials = [
+            {
+                username: "admin",
+                encryptedPassword: "d11fbaafa58bbc6105a2426c5db6fd4c",
+            },
+            {
+                username: "andrew",
+                encryptedPassword: "c77962800851b428e9653055dc1410e1",
+            },
+            {
+                username: "guest",
+                encryptedPassword: "f8f414e58dcaadc150e7b23b49f2efdb",
+            },
+        ];
+
         // Find the user with the given username
         const user = storedCredentials.find((u) => u.username === username);
         if (!user) {
@@ -66,11 +75,8 @@ export default async function handler(event) {
         }
 
         console.log("User found. Decrypting password...");
-        // Decrypt the stored password
-        const decipher = crypto.createDecipher('aes-256-cbc', encryptionKey);
-        let decryptedPassword = decipher.update(user.encryptedPassword, 'hex', 'utf8');
-        decryptedPassword += decipher.final('utf8');
-
+        // Use helper function to decrypt the stored password
+        const decryptedPassword = decryptPassword(user.encryptedPassword, encryptionKey);
         console.log("Decrypted password:", decryptedPassword);
 
         // Compare decrypted password with input password
