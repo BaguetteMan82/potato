@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const functions = require('firebase-functions'); // Firebase Functions module
 
 // Helper function to encrypt passwords
 function encryptPassword(password, key) {
@@ -20,8 +21,8 @@ function decryptPassword(encryptedPassword, key) {
 
 export default async function handler(event) {
     try {
-        // Retrieve the encryption key from Vercel's environment variables
-        const encryptionKey = process.env.ENCRYPT;
+        // Retrieve the encryption key from Firebase's environment variables
+        const encryptionKey = functions.config().encryption.key; // Correctly fetch the key
         if (!encryptionKey) {
             console.error("Encryption key not found in environment variables!");
             return {
