@@ -82,31 +82,54 @@
     </div>
 
     <script>
-       async function login() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
-    try {
-        // Call the Vercel serverless function for authentication
-        const response = await fetch('/api/logins', {
-            method: 'POST',
-            body: JSON.stringify({ username, password }),
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            alert(data.message); // Show success message
-            window.location.href = 'game-selector.html'; // Redirect to the game selector page
-        } else {
-            document.getElementById('errorMessage').textContent = data.message;
-            document.getElementById('errorMessage').style.display = 'block'; // Show error message
+        // Check if the user is already logged in and whether the session is still valid
+        function checkAutoLogout() {
+            const loginTimestamp = localStorage.getItem('loginTimestamp');
+            const currentTime = Date.now();
+            
+            if (loginTimestamp) {
+                const elapsedTime = (currentTime - loginTimestamp) / (1000 * 60 * 60); // Convert to hours
+                if (elapsedTime >= 1) {
+                    // Log the user out if 1 hour has passed
+                    localStorage.removeItem('loginTimestamp');
+                    localStorage.removeItem('loggedIn');
+                    alert('Session expired. You have been logged out.');
+                    window.location.href = 'index.html';
+                }
+            }
         }
-    } catch (error) {
-        alert('An error occurred. Please try again later.');
-    }
-}
+
+        // Call checkAutoLogout immediately when the page loads
+        checkAutoLogout();
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // Call the Vercel serverless function for authentication
+                const response = await fetch('/api/logins', {
+                    method: 'POST',
+                    body: JSON.stringify({ username, password }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Save login state and timestamp in localStorage
+                    localStorage.setItem('loggedIn', 'true');
+                    localStorage.setItem('loginTimestamp', Date.now());
+                    alert(data.message); // Show success message
+                    window.location.href = 'game-selector.html'; // Redirect to the game selector page
+                } else {
+                    document.getElementById('errorMessage').textContent = data.message;
+                    document.getElementById('errorMessage').style.display = 'block'; // Show error message
+                }
+            } catch (error) {
+                alert('An error occurred. Please try again later.');
+            }
+        }
     </script>
 </body>
 </html>
