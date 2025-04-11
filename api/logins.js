@@ -47,13 +47,13 @@ export default async function handler(event) {
             };
         }
 
-        // Success response
+        // Respond quickly with success
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Login successful" })
         };
     } catch (error) {
-        // Log error and return 500 status code
+        // Log error and respond with a failure
         console.error("Error in logins.js:", error);
         return {
             statusCode: 500,
