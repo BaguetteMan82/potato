@@ -41,21 +41,20 @@ export default async function handler(event) {
         console.log("Received login attempt for username:", username);
 
         // Replace this with your stored encrypted passwords
-        const storedCredentials = [
-            {
-                username: "admin",
-                encryptedPassword: "d11fbaafa58bbc6105a2426c5db6fd4c", // Encrypted value for "adminpassword"
-            },
-            {
-                username: "andrew",
-                encryptedPassword: "c77962800851b428e9653055dc1410e1", // Encrypted value for "andrewpassword"
-            },
-            {
-                username: "guest",
-                encryptedPassword: "f8f414e58dcaadc150e7b23b49f2efdb", // Encrypted value for "guestpassword"
-            },
-        ];
-
+     const storedCredentials = [
+    {
+        username: "admin",
+        encryptedPassword: "d11fbaafa58bbc6105a2426c5db6fd4c",
+    },
+    {
+        username: "andrew",
+        encryptedPassword: "c77962800851b428e9653055dc1410e1",
+    },
+    {
+        username: "guest",
+        encryptedPassword: "f8f414e58dcaadc150e7b23b49f2efdb",
+    },
+];
         // Find the user with the given username
         const user = storedCredentials.find((u) => u.username === username);
         if (!user) {
