@@ -44,20 +44,20 @@ export default async function handler(event) {
         const storedCredentials = [
             {
                 username: "admin",
-                hashedPassword: "$2b$10$690mZ3yK32y.1.Dg.SalWObM9KTVio4I0i3WpAwgDGqCimHnMCGMq" // Example hash for "adminpassword"
+                encryptedPassword: "d11fbaafa58bbc6105a2426c5db6fd4c", // Encrypted value for "adminpassword"
             },
             {
                 username: "andrew",
-                hashedPassword: "$2b$10$/x2xlcTuH8vuH2Sv8nI2ueOUQW4Ng0p5IXohcpyCYXcZQ2KiDM.4O" // Example hash for "andrewpassword"
+                encryptedPassword: "c77962800851b428e9653055dc1410e1", // Encrypted value for "andrewpassword"
             },
             {
                 username: "guest",
-                hashedPassword: "$2b$10$CVdVPxuBUDn34vUewFAShOpwOslfbRbPVuiGlo7WHLYL8.x6yHA/O" // Example hash for "guestpassword"
-            }
+                encryptedPassword: "f8f414e58dcaadc150e7b23b49f2efdb", // Encrypted value for "guestpassword"
+            },
         ];
 
         // Find the user with the given username
-        const user = storedCredentials.find(u => u.username === username);
+        const user = storedCredentials.find((u) => u.username === username);
         if (!user) {
             console.log("User not found:", username);
             return {
@@ -84,6 +84,7 @@ export default async function handler(event) {
         }
 
         // Success response
+        console.log("Login successful for user:", username);
         return {
             statusCode: 200,
             body: JSON.stringify({ message: "Login successful" }),
