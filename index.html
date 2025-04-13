@@ -111,7 +111,8 @@
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                alert('An error occurred while logging in. Please try again later.');
+                errorMessage.textContent = 'An error occurred while logging in.';
+                errorMessage.style.display = 'block';
             }
         }
 
