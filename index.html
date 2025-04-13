@@ -6,7 +6,7 @@
     <title>Game Hub Login</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Existing Purple/Pink Modern Theme */
+        /* Updated styling for a modern theme */
         body, html {
             margin: 0;
             padding: 0;
@@ -75,22 +75,24 @@
 <body>
     <div class="login-container">
         <h1>Game Hub Login</h1>
-        <p id="errorMessage">Invalid username or password. Please try again!</p>
+        <p id="errorMessage"></p> <!-- Placeholder for error messages -->
         <input type="text" id="username" class="form-control" placeholder="Username" required>
         <input type="password" id="password" class="form-control" placeholder="Password" required>
         <button id="loginButton">Login</button>
     </div>
 
     <script>
-        // Check if the user's session is still valid
+        // Check session expiration and log the user out if needed
         function checkAutoLogout() {
             const loginTimestamp = localStorage.getItem('loginTimestamp');
-            const currentTime = Date.now();
-            
-            if (loginTimestamp) {
-                const elapsedTime = (currentTime - loginTimestamp) / (1000 * 60 * 60); // Convert milliseconds to hours
+            const loggedIn = localStorage.getItem('loggedIn');
+
+            if (loggedIn === 'true' && loginTimestamp) {
+                const currentTime = Date.now();
+                const elapsedTime = (currentTime - loginTimestamp) / (1000 * 60 * 60); // Convert to hours
+
                 if (elapsedTime >= 1) {
-                    // Log the user out if 1 hour has passed
+                    // Session expired
                     localStorage.removeItem('loginTimestamp');
                     localStorage.removeItem('loggedIn');
                     alert('Session expired. You have been logged out.');
@@ -99,44 +101,48 @@
             }
         }
 
-        // Call checkAutoLogout immediately when the page loads
+        // Immediately check session when the page loads
         checkAutoLogout();
 
         async function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (!username || !password) {
+                errorMessage.textContent = "Username and password cannot be empty.";
+                errorMessage.style.display = 'block';
+                return;
+            }
 
             try {
-                const response = await fetch(
-                    'https://87oliwlkg9.execute-api.eu-north-1.amazonaws.com/bob/logins', // Updated API URL
-                    {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username, password }),
-                    }
-                );
+                // Send login request to the API
+                const response = await fetch('https://87oliwlkg9.execute-api.eu-north-1.amazonaws.com/bob/logins', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Save login state and timestamp in localStorage
+                    // Successful login
                     localStorage.setItem('loggedIn', 'true');
                     localStorage.setItem('loginTimestamp', Date.now());
-                    alert(data.message); // Display success message
-                    window.location.href = 'game-selector.html'; // Redirect to Game Selector page
+                    alert(data.message || "Login successful!"); // Fallback message
+                    window.location.href = 'game-selector.html'; // Redirect to the game selector
                 } else {
-                    // Display error message from API
-                    const errorMessage = document.getElementById('errorMessage');
-                    errorMessage.textContent = data.message || 'Invalid username or password.';
+                    // Display error message from the API
+                    errorMessage.textContent = data.message || "Invalid username or password.";
                     errorMessage.style.display = 'block';
                 }
             } catch (error) {
-                alert('An error occurred while logging in. Please try again later.');
                 console.error('Login error:', error);
+                alert('An error occurred while logging in. Please try again later.');
             }
         }
 
-        // Attach login function to button
+        // Attach the login function to the button
         document.getElementById('loginButton').addEventListener('click', login);
     </script>
 </body>
