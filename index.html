@@ -18,7 +18,6 @@
             justify-content: center;
             align-items: center;
         }
-
         .login-container {
             background-color: rgba(26, 26, 46, 0.9);
             padding: 30px;
@@ -27,12 +26,10 @@
             text-align: center;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-
         .login-container h1 {
             color: #e94560;
             margin-bottom: 20px;
         }
-
         .form-control {
             background-color: rgba(26, 26, 46, 0.5);
             border: 1px solid #e94560;
@@ -40,12 +37,10 @@
             color: #fff;
             margin-bottom: 15px;
         }
-
         .form-control:focus {
             outline: none;
             box-shadow: 0 0 10px #e94560;
         }
-
         button {
             background: linear-gradient(45deg, #7f5af0, #e94560);
             color: #fff;
@@ -58,12 +53,10 @@
             font-size: 16px;
             width: 100%;
         }
-
         button:hover {
             background: linear-gradient(45deg, #e94560, #7f5af0);
             transform: scale(1.05);
         }
-
         #errorMessage {
             display: none;
             color: #e94560;
@@ -80,41 +73,44 @@
         <button id="loginButton">Login</button>
     </div>
 
-    <!-- Previous HTML remains exactly the same until the script -->
-<script>
-document.getElementById('loginButton').addEventListener('click', async function() {
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value.trim();
-    
-    try {
-        const response = await fetch('https://87oliwlkg9.execute-api.eu-north-1.amazonaws.com/bob/logins', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
+    <script>
+        document.getElementById('loginButton').addEventListener('click', async function() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Clear previous errors
+            errorMessage.style.display = 'none';
+            
+            if (!username || !password) {
+                errorMessage.textContent = "Username and password cannot be empty.";
+                errorMessage.style.display = 'block';
+                return;
+            }
 
-        if (response.ok) {
-            // DOUBLE SECURE STORAGE
-            localStorage.setItem('gamehub_auth', 'true');
-            sessionStorage.setItem('gamehub_auth', 'true');
-            document.cookie = "gamehub_auth=true; path=/; max-age=86400"; // 1 day
-            
-            console.log("STORAGE SET:", { 
-                localStorage: localStorage.getItem('gamehub_auth'),
-                sessionStorage: sessionStorage.getItem('gamehub_auth'),
-                cookie: document.cookie 
-            });
-            
-            window.location.href = 'game-selector.html';
-        } else {
-            throw new Error(await response.text());
-        }
-    } catch (error) {
-        console.error("Login failed:", error);
-        alert("Login failed. Please check console for details.");
-    }
-});
-</script>
-    
+            try {
+                const response = await fetch('https://87oliwlkg9.execute-api.eu-north-1.amazonaws.com/bob/logins', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    // Set authentication markers
+                    localStorage.setItem('gamehub_auth', 'true');
+                    sessionStorage.setItem('gamehub_auth', 'true');
+                    document.cookie = "gamehub_auth=true; path=/; max-age=86400"; // 1 day
+                    
+                    window.location.href = 'game-selector.html';
+                } else {
+                    throw new Error(await response.text());
+                }
+            } catch (error) {
+                errorMessage.textContent = error.message || "Login failed. Please try again.";
+                errorMessage.style.display = 'block';
+                console.error("Login error:", error);
+            }
+        });
+    </script>
 </body>
 </html>
