@@ -80,57 +80,41 @@
         <button id="loginButton">Login</button>
     </div>
 
-    <script>
-        document.getElementById('loginButton').addEventListener('click', async function() {
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const errorMessage = document.getElementById('errorMessage');
-            const loginButton = document.getElementById('loginButton');
-
-            // Clear previous errors
-            errorMessage.style.display = 'none';
-            loginButton.disabled = true;
-            loginButton.textContent = 'Logging in...';
-
-            if (!username || !password) {
-                showError("Username and password cannot be empty.");
-                loginButton.disabled = false;
-                loginButton.textContent = 'Login';
-                return;
-            }
-
-            try {
-                const response = await fetch('https://87oliwlkg9.execute-api.eu-north-1.amazonaws.com/bob/logins', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-
-                if (response.ok) {
-                    // Store simple login state
-                    localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('username', username);
-                    
-                    // Redirect to game page
-                    window.location.href = 'game-selector.html';
-                } else {
-                    const error = await response.json();
-                    throw new Error(error.message || 'Invalid username or password');
-                }
-            } catch (error) {
-                showError(error.message);
-                console.error('Login error:', error);
-            } finally {
-                loginButton.disabled = false;
-                loginButton.textContent = 'Login';
-            }
+    <!-- Previous HTML remains exactly the same until the script -->
+<script>
+document.getElementById('loginButton').addEventListener('click', async function() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    
+    try {
+        const response = await fetch('https://87oliwlkg9.execute-api.eu-north-1.amazonaws.com/bob/logins', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
         });
 
-        function showError(message) {
-            const errorMessage = document.getElementById('errorMessage');
-            errorMessage.textContent = message;
-            errorMessage.style.display = 'block';
+        if (response.ok) {
+            // DOUBLE SECURE STORAGE
+            localStorage.setItem('gamehub_auth', 'true');
+            sessionStorage.setItem('gamehub_auth', 'true');
+            document.cookie = "gamehub_auth=true; path=/; max-age=86400"; // 1 day
+            
+            console.log("STORAGE SET:", { 
+                localStorage: localStorage.getItem('gamehub_auth'),
+                sessionStorage: sessionStorage.getItem('gamehub_auth'),
+                cookie: document.cookie 
+            });
+            
+            window.location.href = 'game-selector.html';
+        } else {
+            throw new Error(await response.text());
         }
-    </script>
+    } catch (error) {
+        console.error("Login failed:", error);
+        alert("Login failed. Please check console for details.");
+    }
+});
+</script>
+    
 </body>
 </html>
