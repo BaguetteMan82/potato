@@ -74,46 +74,15 @@
 <body>
     <div class="login-container">
         <h1>Game Hub Login</h1>
-        <p id="errorMessage"></p>
+        <p id="errorMessage"></p> <!-- Placeholder for error messages -->
         <input type="text" id="username" class="form-control" placeholder="Username" required>
         <input type="password" id="password" class="form-control" placeholder="Password" required>
         <button id="loginButton">Login</button>
     </div>
 
     <script>
-        // Check for session expiration and logout user if needed
-        function checkAutoLogout() {
-            const loggedIn = localStorage.getItem('loggedIn');
-            const loginTimestamp = localStorage.getItem('loginTimestamp');
+        let logoutTimer; // Declare a global timer variable
 
-            // Debugging logs
-            console.log('loggedIn:', loggedIn);
-            console.log('loginTimestamp:', loginTimestamp);
-
-            if (loggedIn === 'true' && loginTimestamp) {
-                const currentTime = Date.now();
-                const elapsedTime = (currentTime - parseInt(loginTimestamp, 10)) / (1000 * 60 * 60); // Convert to hours
-
-                console.log('Elapsed time since login (hours):', elapsedTime);
-
-                // Auto-logout after 1 hour
-                if (elapsedTime >= 1) {
-                    localStorage.removeItem('loggedIn');
-                    localStorage.removeItem('loginTimestamp');
-                    alert('Session expired. You have been logged out.');
-                    window.location.href = 'index.html';
-                }
-            } else {
-                console.log('Invalid session. User logged out.');
-                localStorage.removeItem('loggedIn');
-                localStorage.removeItem('loginTimestamp');
-            }
-        }
-
-        // Call checkAutoLogout when the page loads
-        checkAutoLogout();
-
-        // Login function
         async function login() {
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
@@ -137,8 +106,14 @@
                 if (response.ok) {
                     // Save session details in localStorage
                     localStorage.setItem('loggedIn', 'true');
-                    localStorage.setItem('loginTimestamp', Date.now().toString());
                     alert(data.message || "Login successful!");
+
+                    // Set a timer based on the username
+                    const sessionDuration = username.toLowerCase() === 'guest' ? 600000 : 3600000; // 10 mins or 1 hour
+                    logoutTimer = setTimeout(() => {
+                        logout();
+                    }, sessionDuration);
+
                     window.location.href = 'game-selector.html';
                 } else {
                     errorMessage.textContent = data.message || "Invalid username or password.";
@@ -148,6 +123,13 @@
                 console.error('Login error:', error);
                 alert('An error occurred while logging in. Please try again later.');
             }
+        }
+
+        function logout() {
+            // Clear session and redirect to login page
+            localStorage.removeItem('loggedIn');
+            alert('Session expired. You have been logged out.');
+            window.location.href = 'index.html';
         }
 
         // Attach login function to button
