@@ -112,9 +112,9 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Save session details in localStorage
-                    localStorage.setItem('loggedIn', 'true');
-                    localStorage.setItem('username', username); // Store the username
+                    // Save session details in sessionStorage
+                    sessionStorage.setItem('loggedIn', 'true');
+                    sessionStorage.setItem('username', username); // Store the username
                     alert(data.message || "Login successful!");
 
                     // Set a timer based on the username
@@ -132,37 +132,12 @@
             }
         }
 
-        function checkSessionOnPageLoad() {
-            const loggedIn = localStorage.getItem('loggedIn');
-            const username = localStorage.getItem('username');
-            const currentPath = window.location.pathname;
-
-            console.log('Checking session on page load.');
-            console.log('Current Path:', currentPath);
-            console.log('loggedIn:', loggedIn);
-            console.log('username:', username);
-
-            // Run session check only on non-login pages AND if the user is logged in
-            if (loggedIn === 'true' && username && (currentPath.includes('selector') || currentPath.includes('game'))) {
-                const sessionDuration = username.toLowerCase() === 'guest' ? 600000 : 3600000; // 10 mins or 1 hour
-                startLogoutTimer(sessionDuration); // Restart timer on page load
-                console.log('Session valid. Timer restarted.');
-            } else {
-                // No session found, allow login or ignore if on the login page
-                console.log('No active session or not on a game/selector page. Login page displayed.');
-            }
-        }
-
         function logout() {
             console.log('Logging out.');
-            localStorage.removeItem('loggedIn');
-            localStorage.removeItem('username');
+            sessionStorage.clear(); // Clear all session data
             alert('Session expired. You have been logged out.');
             window.location.href = 'index.html';
         }
-
-        // Run session check on page load
-        checkSessionOnPageLoad();
 
         // Attach login function to button
         document.getElementById('loginButton').addEventListener('click', login);
