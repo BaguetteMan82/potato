@@ -148,8 +148,8 @@
                 startLogoutTimer(sessionDuration); // Restart timer on page load
                 console.log('Session valid, timer restarted.');
             } else {
-                // Clear invalid session
-                logout();
+                // Do not logout if the user is not logged in, allow login form to show
+                console.log('No active session found. Login page displayed.');
             }
         }
 
