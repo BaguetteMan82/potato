@@ -112,16 +112,16 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Save session details in sessionStorage
-                    sessionStorage.setItem('loggedIn', 'true');
-                    sessionStorage.setItem('username', username); // Store the username
+                    // Save session details in localStorage
+                    localStorage.setItem('loggedIn', 'true');
+                    localStorage.setItem('username', username); // Store the username
                     alert(data.message || "Login successful!");
 
                     // Set a timer based on the username
                     const sessionDuration = username.toLowerCase() === 'guest' ? 600000 : 3600000; // 10 mins or 1 hour
                     startLogoutTimer(sessionDuration);
 
-                    window.location.href = 'game-selector.html';
+                    window.location.replace('game-selector.html'); // Navigation without reload history
                 } else {
                     errorMessage.textContent = data.message || "Invalid username or password.";
                     errorMessage.style.display = 'block';
@@ -134,13 +134,19 @@
 
         function logout() {
             console.log('Logging out.');
-            sessionStorage.clear(); // Clear all session data
+            localStorage.clear(); // Clear all session data
             alert('Session expired. You have been logged out.');
-            window.location.href = 'index.html';
+            window.location.replace('index.html'); // Redirect to login page
         }
 
         // Attach login function to button
         document.getElementById('loginButton').addEventListener('click', login);
+
+        // Debugging: Check session status on page load (only for testing)
+        console.log('Session State on Load:', {
+            loggedIn: localStorage.getItem('loggedIn'),
+            username: localStorage.getItem('username'),
+        });
     </script>
 </body>
 </html>
