@@ -2,28 +2,41 @@
     // Skip auth check on login page
     if (window.location.pathname.endsWith('index.html')) return;
 
+    // Check authentication
     try {
-        const authData = JSON.parse(localStorage.getItem('auth'));
+        const authData = localStorage.getItem('auth');
+        if (!authData) {
+            redirectToLogin();
+            return;
+        }
+
+        const { username, expires } = JSON.parse(authData);
         
-        // Check if auth data exists and isn't expired
-        if (!authData || Date.now() > authData.expires) {
+        // Check if session expired
+        if (Date.now() > expires) {
             localStorage.removeItem('auth');
-            window.location.href = 'index.html';
+            redirectToLogin();
             return;
         }
 
         // Set auto-logout timer
-        const remainingTime = authData.expires - Date.now();
+        const remainingTime = expires - Date.now();
         if (remainingTime > 0) {
             setTimeout(() => {
                 localStorage.removeItem('auth');
-                window.location.href = 'index.html';
+                redirectToLogin();
             }, remainingTime);
         }
 
     } catch (e) {
         console.error('Auth check failed:', e);
-        localStorage.removeItem('auth');
-        window.location.href = 'index.html';
+        redirectToLogin();
+    }
+
+    function redirectToLogin() {
+        // Only redirect if not already on login page
+        if (!window.location.pathname.endsWith('index.html')) {
+            window.location.href = 'index.html';
+        }
     }
 })();
