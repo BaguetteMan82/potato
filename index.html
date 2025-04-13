@@ -6,7 +6,6 @@
     <title>Game Hub Login</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Your existing styles remain unchanged */
         body, html {
             margin: 0;
             padding: 0;
@@ -19,7 +18,57 @@
             justify-content: center;
             align-items: center;
         }
-        /* ... rest of your CSS ... */
+
+        .login-container {
+            background-color: rgba(26, 26, 46, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-container h1 {
+            color: #e94560;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            background-color: rgba(26, 26, 46, 0.5);
+            border: 1px solid #e94560;
+            border-radius: 25px;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            box-shadow: 0 0 10px #e94560;
+        }
+
+        button {
+            background: linear-gradient(45deg, #7f5af0, #e94560);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #e94560, #7f5af0);
+            transform: scale(1.05);
+        }
+
+        #errorMessage {
+            display: none;
+            color: #e94560;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -31,7 +80,6 @@
         <button id="loginButton">Login</button>
     </div>
 
-    <script src="auth.js"></script>
     <script>
         document.getElementById('loginButton').addEventListener('click', async function() {
             const username = document.getElementById('username').value.trim();
@@ -54,9 +102,18 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Handle successful login through auth.js
-                    handleSuccessfulLogin(username);
-                    window.location.replace('game-selector.html');
+                    // Store authentication status
+                    localStorage.setItem('isAuthenticated', 'true');
+                    localStorage.setItem('username', username);
+                    
+                    // Set session timeout (1 hour or 10 minutes for guest)
+                    const timeout = username.toLowerCase() === 'guest' ? 600000 : 3600000;
+                    setTimeout(() => {
+                        localStorage.removeItem('isAuthenticated');
+                        window.location.href = 'index.html';
+                    }, timeout);
+
+                    window.location.href = 'game-selector.html';
                 } else {
                     errorMessage.textContent = data.message || "Invalid username or password.";
                     errorMessage.style.display = 'block';
@@ -68,5 +125,6 @@
             }
         });
     </script>
+    <script src="auth.js"></script>
 </body>
 </html>
