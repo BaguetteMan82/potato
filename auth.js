@@ -1,31 +1,45 @@
+// auth.js - Nuclear Option
 (function() {
-    // Skip check on login page
-    if (window.location.pathname.includes('index.html')) return;
-    
-    // Triple verification system
-    const isAuthenticated = (
-        localStorage.getItem('gamehub_auth') === 'true' ||
-        sessionStorage.getItem('gamehub_auth') === 'true' ||
-        document.cookie.includes('gamehub_auth=true')
-    );
-    
-    console.log("Authentication Check:", {
-        localStorage: localStorage.getItem('gamehub_auth'),
-        sessionStorage: sessionStorage.getItem('gamehub_auth'),
-        cookies: document.cookie,
-        result: isAuthenticated ? "AUTHENTICATED" : "NOT AUTHENTICATED"
-    });
-    
-    if (!isAuthenticated) {
-        console.warn("Not authenticated - redirecting to login...");
-        window.location.href = 'index.html';
-    }
-    
-    // Manual logout function
-    window.logout = function() {
-        localStorage.removeItem('gamehub_auth');
-        sessionStorage.removeItem('gamehub_auth');
-        document.cookie = "gamehub_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        window.location.href = 'index.html';
+    // 1. Storage Protection
+    const AUTH_KEY = 'gamehub_nuclear_auth';
+    const storage = {
+        set: (value) => {
+            localStorage.setItem(AUTH_KEY, value);
+            sessionStorage.setItem(AUTH_KEY, value);
+            document.cookie = `${AUTH_KEY}=${value}; path=/; max-age=86400; Secure`;
+        },
+        get: () => localStorage.getItem(AUTH_KEY) 
+                  || sessionStorage.getItem(AUTH_KEY) 
+                  || document.cookie.includes(`${AUTH_KEY}=true`)
     };
+
+    // 2. Skip login page
+    if (location.pathname.endsWith('index.html')) return;
+
+    // 3. Validation with fallbacks
+    if (!storage.get()) {
+        console.error("Auth failed - Storage State:", {
+            localStorage: localStorage.getItem(AUTH_KEY),
+            sessionStorage: sessionStorage.getItem(AUTH_KEY),
+            cookie: document.cookie,
+            time: new Date().toISOString()
+        });
+        
+        // Emergency fallback (lasts 5 minutes)
+        const emergencyAuth = sessionStorage.getItem('emergency_auth') || 
+                            localStorage.setItem('emergency_auth', 'true');
+        
+        if (!emergencyAuth) {
+            location.href = 'index.html';
+            return;
+        }
+    }
+
+    // 4. Continuous Validation (every 10 seconds)
+    setInterval(() => {
+        if (!storage.get()) {
+            console.warn("Auth lost - Redirecting...");
+            location.href = 'index.html';
+        }
+    }, 10000);
 })();
