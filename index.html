@@ -84,20 +84,27 @@
     <script>
         // Check session expiration and log the user out if needed
         function checkAutoLogout() {
-            const loginTimestamp = localStorage.getItem('loginTimestamp');
             const loggedIn = localStorage.getItem('loggedIn');
+            const loginTimestamp = localStorage.getItem('loginTimestamp');
+
+            console.log('loggedIn:', loggedIn);
+            console.log('loginTimestamp:', loginTimestamp);
 
             if (loggedIn === 'true' && loginTimestamp) {
                 const currentTime = Date.now();
-                const elapsedTime = (currentTime - loginTimestamp) / (1000 * 60 * 60); // Convert to hours
+                const elapsedTime = (currentTime - parseInt(loginTimestamp, 10)) / (1000 * 60 * 60); // Convert ms to hours
 
                 if (elapsedTime >= 1) {
                     // Session expired
-                    localStorage.removeItem('loginTimestamp');
                     localStorage.removeItem('loggedIn');
+                    localStorage.removeItem('loginTimestamp');
                     alert('Session expired. You have been logged out.');
-                    window.location.href = 'index.html';
+                    window.location.href = 'index.html'; // Redirect to login page
                 }
+            } else if (!loggedIn || !loginTimestamp) {
+                // If session is invalid, ensure user is logged out
+                localStorage.removeItem('loggedIn');
+                localStorage.removeItem('loginTimestamp');
             }
         }
 
@@ -116,7 +123,6 @@
             }
 
             try {
-                // Send login request to the API
                 const response = await fetch('https://87oliwlkg9.execute-api.eu-north-1.amazonaws.com/bob/logins', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -126,11 +132,11 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Successful login
+                    // Save login state and timestamp
                     localStorage.setItem('loggedIn', 'true');
-                    localStorage.setItem('loginTimestamp', Date.now());
+                    localStorage.setItem('loginTimestamp', Date.now().toString()); // Save timestamp as string
                     alert(data.message || "Login successful!"); // Fallback message
-                    window.location.href = 'game-selector.html'; // Redirect to the game selector
+                    window.location.href = 'game-selector.html'; // Redirect on success
                 } else {
                     // Display error message from the API
                     errorMessage.textContent = data.message || "Invalid username or password.";
