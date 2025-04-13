@@ -84,10 +84,8 @@
         let logoutTimer; // Declare a global timer variable
 
         function startLogoutTimer(sessionDuration) {
-            // Clear any existing timers
-            if (logoutTimer) clearTimeout(logoutTimer);
-
-            // Set a timeout for auto-logout
+            console.log(`Starting logout timer for ${sessionDuration / 60000} minutes.`);
+            if (logoutTimer) clearTimeout(logoutTimer); // Clear any existing timers
             logoutTimer = setTimeout(() => {
                 logout();
             }, sessionDuration);
@@ -137,31 +135,33 @@
         function checkSessionOnPageLoad() {
             const loggedIn = localStorage.getItem('loggedIn');
             const username = localStorage.getItem('username');
+            const currentPath = window.location.pathname;
 
-            // Debugging logs
-            console.log('Session Check:');
+            console.log('Checking session on page load.');
+            console.log('Current Path:', currentPath);
             console.log('loggedIn:', loggedIn);
             console.log('username:', username);
 
-            if (loggedIn === 'true' && username) {
+            // Run session check only on non-login pages AND if the user is logged in
+            if (loggedIn === 'true' && username && (currentPath.includes('selector') || currentPath.includes('game'))) {
                 const sessionDuration = username.toLowerCase() === 'guest' ? 600000 : 3600000; // 10 mins or 1 hour
                 startLogoutTimer(sessionDuration); // Restart timer on page load
-                console.log('Session valid, timer restarted.');
+                console.log('Session valid. Timer restarted.');
             } else {
-                // Do not logout if the user is not logged in, allow login form to show
-                console.log('No active session found. Login page displayed.');
+                // No session found, allow login or ignore if on the login page
+                console.log('No active session or not on a game/selector page. Login page displayed.');
             }
         }
 
         function logout() {
-            // Clear session and redirect to login page
+            console.log('Logging out.');
             localStorage.removeItem('loggedIn');
             localStorage.removeItem('username');
             alert('Session expired. You have been logged out.');
             window.location.href = 'index.html';
         }
 
-        // Check session when the page loads
+        // Run session check on page load
         checkSessionOnPageLoad();
 
         // Attach login function to button
