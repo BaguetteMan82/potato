@@ -69,22 +69,6 @@
             color: #e94560;
             margin-bottom: 15px;
         }
-
-        /* Loading spinner */
-        .spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
@@ -93,10 +77,7 @@
         <p id="errorMessage"></p>
         <input type="text" id="username" class="form-control" placeholder="Username" required>
         <input type="password" id="password" class="form-control" placeholder="Password" required>
-        <button id="loginButton">
-            <span id="loginText">Login</span>
-            <div class="spinner" id="spinner"></div>
-        </button>
+        <button id="loginButton">Login</button>
     </div>
 
     <script>
@@ -104,18 +85,17 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
             const errorMessage = document.getElementById('errorMessage');
-            const loginText = document.getElementById('loginText');
-            const spinner = document.getElementById('spinner');
             const loginButton = document.getElementById('loginButton');
 
-            // Clear previous errors and show loading
+            // Clear previous errors
             errorMessage.style.display = 'none';
-            loginText.style.display = 'none';
-            spinner.style.display = 'block';
             loginButton.disabled = true;
+            loginButton.textContent = 'Logging in...';
 
             if (!username || !password) {
                 showError("Username and password cannot be empty.");
+                loginButton.disabled = false;
+                loginButton.textContent = 'Login';
                 return;
             }
 
@@ -126,27 +106,23 @@
                     body: JSON.stringify({ username, password })
                 });
 
-                const data = await response.json();
-
                 if (response.ok) {
-                    // Store authentication data
-                    localStorage.setItem('auth', JSON.stringify({
-                        username,
-                        expires: Date.now() + (username.toLowerCase() === 'guest' ? 600000 : 3600000)
-                    }));
+                    // Store simple login state
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('username', username);
                     
-                    // Redirect to game selector
+                    // Redirect to game page
                     window.location.href = 'game-selector.html';
                 } else {
-                    showError(data.message || "Invalid username or password.");
+                    const error = await response.json();
+                    throw new Error(error.message || 'Invalid username or password');
                 }
             } catch (error) {
+                showError(error.message);
                 console.error('Login error:', error);
-                showError('An error occurred while logging in. Please try again later.');
             } finally {
-                loginText.style.display = 'inline';
-                spinner.style.display = 'none';
                 loginButton.disabled = false;
+                loginButton.textContent = 'Login';
             }
         });
 
@@ -156,6 +132,5 @@
             errorMessage.style.display = 'block';
         }
     </script>
-    <script src="auth.js"></script>
 </body>
 </html>
