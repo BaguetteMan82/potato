@@ -1,19 +1,31 @@
-// Simple auth check - runs on every page except login
 (function() {
     // Skip check on login page
     if (window.location.pathname.includes('index.html')) return;
     
-    // Check login status
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    // Triple verification system
+    const isAuthenticated = (
+        localStorage.getItem('gamehub_auth') === 'true' ||
+        sessionStorage.getItem('gamehub_auth') === 'true' ||
+        document.cookie.includes('gamehub_auth=true')
+    );
     
-    if (!isLoggedIn) {
-        alert('Please login to access this page');
+    console.log("Authentication Check:", {
+        localStorage: localStorage.getItem('gamehub_auth'),
+        sessionStorage: sessionStorage.getItem('gamehub_auth'),
+        cookies: document.cookie,
+        result: isAuthenticated ? "AUTHENTICATED" : "NOT AUTHENTICATED"
+    });
+    
+    if (!isAuthenticated) {
+        console.warn("Not authenticated - redirecting to login...");
         window.location.href = 'index.html';
     }
     
-    // Optional: Add manual logout function
+    // Manual logout function
     window.logout = function() {
-        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('gamehub_auth');
+        sessionStorage.removeItem('gamehub_auth');
+        document.cookie = "gamehub_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         window.location.href = 'index.html';
     };
 })();
