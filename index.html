@@ -6,7 +6,6 @@
     <title>Game Hub Login</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Updated styling for a modern theme */
         body, html {
             margin: 0;
             padding: 0;
@@ -14,7 +13,7 @@
             height: 100%;
             font-family: 'Poppins', 'Arial', sans-serif;
             color: #fff;
-            background-color: #1a1a2e; /* Dark blue-purple background */
+            background-color: #1a1a2e;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -75,42 +74,46 @@
 <body>
     <div class="login-container">
         <h1>Game Hub Login</h1>
-        <p id="errorMessage"></p> <!-- Placeholder for error messages -->
+        <p id="errorMessage"></p>
         <input type="text" id="username" class="form-control" placeholder="Username" required>
         <input type="password" id="password" class="form-control" placeholder="Password" required>
         <button id="loginButton">Login</button>
     </div>
 
     <script>
-        // Check session expiration and log the user out if needed
+        // Check for session expiration and logout user if needed
         function checkAutoLogout() {
             const loggedIn = localStorage.getItem('loggedIn');
             const loginTimestamp = localStorage.getItem('loginTimestamp');
 
+            // Debugging logs
             console.log('loggedIn:', loggedIn);
             console.log('loginTimestamp:', loginTimestamp);
 
             if (loggedIn === 'true' && loginTimestamp) {
                 const currentTime = Date.now();
-                const elapsedTime = (currentTime - parseInt(loginTimestamp, 10)) / (1000 * 60 * 60); // Convert ms to hours
+                const elapsedTime = (currentTime - parseInt(loginTimestamp, 10)) / (1000 * 60 * 60); // Convert to hours
 
+                console.log('Elapsed time since login (hours):', elapsedTime);
+
+                // Auto-logout after 1 hour
                 if (elapsedTime >= 1) {
-                    // Session expired
                     localStorage.removeItem('loggedIn');
                     localStorage.removeItem('loginTimestamp');
                     alert('Session expired. You have been logged out.');
-                    window.location.href = 'index.html'; // Redirect to login page
+                    window.location.href = 'index.html';
                 }
-            } else if (!loggedIn || !loginTimestamp) {
-                // If session is invalid, ensure user is logged out
+            } else {
+                console.log('Invalid session. User logged out.');
                 localStorage.removeItem('loggedIn');
                 localStorage.removeItem('loginTimestamp');
             }
         }
 
-        // Immediately check session when the page loads
+        // Call checkAutoLogout when the page loads
         checkAutoLogout();
 
+        // Login function
         async function login() {
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
@@ -132,13 +135,12 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Save login state and timestamp
+                    // Save session details in localStorage
                     localStorage.setItem('loggedIn', 'true');
-                    localStorage.setItem('loginTimestamp', Date.now().toString()); // Save timestamp as string
-                    alert(data.message || "Login successful!"); // Fallback message
-                    window.location.href = 'game-selector.html'; // Redirect on success
+                    localStorage.setItem('loginTimestamp', Date.now().toString());
+                    alert(data.message || "Login successful!");
+                    window.location.href = 'game-selector.html';
                 } else {
-                    // Display error message from the API
                     errorMessage.textContent = data.message || "Invalid username or password.";
                     errorMessage.style.display = 'block';
                 }
@@ -148,7 +150,7 @@
             }
         }
 
-        // Attach the login function to the button
+        // Attach login function to button
         document.getElementById('loginButton').addEventListener('click', login);
     </script>
 </body>
