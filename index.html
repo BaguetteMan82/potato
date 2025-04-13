@@ -1,9 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Keep all your existing style tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Hub Login</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Your existing CSS remains unchanged */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Poppins', 'Arial', sans-serif;
+            color: #fff;
+            background-color: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background-color: rgba(26, 26, 46, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-container h1 {
+            color: #e94560;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            background-color: rgba(26, 26, 46, 0.5);
+            border: 1px solid #e94560;
+            border-radius: 25px;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            box-shadow: 0 0 10px #e94560;
+        }
+
+        button {
+            background: linear-gradient(45deg, #7f5af0, #e94560);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #e94560, #7f5af0);
+            transform: scale(1.05);
+        }
+
+        #errorMessage {
+            display: none;
+            color: #e94560;
+            margin-bottom: 15px;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -12,7 +93,10 @@
         <p id="errorMessage"></p>
         <input type="text" id="username" class="form-control" placeholder="Username" required>
         <input type="password" id="password" class="form-control" placeholder="Password" required>
-        <button id="loginButton">Login</button>
+        <button id="loginButton">
+            <span id="loginText">Login</span>
+            <div class="spinner" id="spinner"></div>
+        </button>
     </div>
 
     <script>
@@ -20,13 +104,18 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
             const errorMessage = document.getElementById('errorMessage');
+            const loginText = document.getElementById('loginText');
+            const spinner = document.getElementById('spinner');
+            const loginButton = document.getElementById('loginButton');
 
-            // Clear previous errors
+            // Clear previous errors and show loading
             errorMessage.style.display = 'none';
+            loginText.style.display = 'none';
+            spinner.style.display = 'block';
+            loginButton.disabled = true;
 
             if (!username || !password) {
-                errorMessage.textContent = "Username and password cannot be empty.";
-                errorMessage.style.display = 'block';
+                showError("Username and password cannot be empty.");
                 return;
             }
 
@@ -37,26 +126,36 @@
                     body: JSON.stringify({ username, password })
                 });
 
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.message || 'Login failed');
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Store authentication data
+                    localStorage.setItem('auth', JSON.stringify({
+                        username,
+                        expires: Date.now() + (username.toLowerCase() === 'guest' ? 600000 : 3600000)
+                    }));
+                    
+                    // Redirect to game selector
+                    window.location.href = 'game-selector.html';
+                } else {
+                    showError(data.message || "Invalid username or password.");
                 }
-
-                // Store session data
-                localStorage.setItem('auth', JSON.stringify({
-                    username,
-                    expires: Date.now() + (username.toLowerCase() === 'guest' ? 600000 : 3600000)
-                }));
-
-                // Redirect after successful login
-                window.location.href = 'game-selector.html';
-                
             } catch (error) {
-                errorMessage.textContent = error.message;
-                errorMessage.style.display = 'block';
                 console.error('Login error:', error);
+                showError('An error occurred while logging in. Please try again later.');
+            } finally {
+                loginText.style.display = 'inline';
+                spinner.style.display = 'none';
+                loginButton.disabled = false;
             }
         });
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
     </script>
+    <script src="auth.js"></script>
 </body>
 </html>
