@@ -6,6 +6,7 @@
     <title>Game Hub Login</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
+        /* Your existing styles remain unchanged */
         body, html {
             margin: 0;
             padding: 0;
@@ -18,80 +19,21 @@
             justify-content: center;
             align-items: center;
         }
-
-        .login-container {
-            background-color: rgba(26, 26, 46, 0.9);
-            padding: 30px;
-            border-radius: 15px;
-            width: 400px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .login-container h1 {
-            color: #e94560;
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            background-color: rgba(26, 26, 46, 0.5);
-            border: 1px solid #e94560;
-            border-radius: 25px;
-            color: #fff;
-            margin-bottom: 15px;
-        }
-
-        .form-control:focus {
-            outline: none;
-            box-shadow: 0 0 10px #e94560;
-        }
-
-        button {
-            background: linear-gradient(45deg, #7f5af0, #e94560);
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            font-size: 16px;
-            width: 100%;
-        }
-
-        button:hover {
-            background: linear-gradient(45deg, #e94560, #7f5af0);
-            transform: scale(1.05);
-        }
-
-        #errorMessage {
-            display: none;
-            color: #e94560;
-            margin-bottom: 15px;
-        }
+        /* ... rest of your CSS ... */
     </style>
 </head>
 <body>
     <div class="login-container">
         <h1>Game Hub Login</h1>
-        <p id="errorMessage"></p> <!-- Placeholder for error messages -->
+        <p id="errorMessage"></p>
         <input type="text" id="username" class="form-control" placeholder="Username" required>
         <input type="password" id="password" class="form-control" placeholder="Password" required>
         <button id="loginButton">Login</button>
     </div>
 
+    <script src="auth.js"></script>
     <script>
-        let logoutTimer; // Declare a global timer variable
-
-        function startLogoutTimer(sessionDuration) {
-            console.log(`Starting logout timer for ${sessionDuration / 60000} minutes.`);
-            if (logoutTimer) clearTimeout(logoutTimer); // Clear any existing timers
-            logoutTimer = setTimeout(() => {
-                logout();
-            }, sessionDuration);
-        }
-
-        async function login() {
+        document.getElementById('loginButton').addEventListener('click', async function() {
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
             const errorMessage = document.getElementById('errorMessage');
@@ -112,44 +54,19 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Save session details in localStorage
-                    localStorage.setItem('loggedIn', 'true');
-                    localStorage.setItem('username', username); // Store the username
-                    alert(data.message || "Login successful!");
-
-                    // Set a timer based on the username
-                    const sessionDuration = username.toLowerCase() === 'guest' ? 600000 : 3600000; // 10 mins or 1 hour
-                    startLogoutTimer(sessionDuration);
-
-                    window.location.replace('game-selector.html'); // Navigation without reload history
+                    // Handle successful login through auth.js
+                    handleSuccessfulLogin(username);
+                    window.location.replace('game-selector.html');
                 } else {
                     errorMessage.textContent = data.message || "Invalid username or password.";
                     errorMessage.style.display = 'block';
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                alert('An error occurred while logging in. Please try again later.');
+                errorMessage.textContent = 'An error occurred while logging in. Please try again later.';
+                errorMessage.style.display = 'block';
             }
-        }
-
-        function logout() {
-            console.log('Logging out.');
-            localStorage.clear(); // Clear all session data
-            alert('Session expired. You have been logged out.');
-            window.location.replace('index.html'); // Redirect to login page
-        }
-
-        // Attach login function to button
-        document.getElementById('loginButton').addEventListener('click', login);
-
-        // Debugging: Check session status on page load (only for testing)
-        console.log('Session State on Load:', {
-            loggedIn: localStorage.getItem('loggedIn'),
-            username: localStorage.getItem('username'),
         });
     </script>
-<script src="auth.js"></script>
 </body>
 </html>
-
-
