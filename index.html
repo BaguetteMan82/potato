@@ -105,13 +105,8 @@
                 if (response.ok) {
                     const data = await response.json();
                     alert(data.message || "Login successful!");
-                    // Check for token in cookies before redirecting
-                    if (document.cookie.includes("token")) {
-                        window.location.replace('game-selector.html'); // Redirect to the next page
-                    } else {
-                        errorMessage.textContent = "Login successful, but no token received.";
-                        errorMessage.style.display = 'block';
-                    }
+                    // Redirect after successful login
+                    window.location.replace('game-selector.html');
                 } else {
                     const errorData = await response.json();
                     errorMessage.textContent = errorData.message || "Invalid username or password.";
